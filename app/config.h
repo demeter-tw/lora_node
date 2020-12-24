@@ -1,0 +1,290 @@
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
+
+#include "stm32f10x_conf.h"
+
+#define CONFIG_MODULE_LED			1
+#define CONFIG_MODULE_DEBUG_USART 		1
+#define CONFIG_MODULE_MODBUS                    		1
+#define CONFIG_MODULE_FW_ENV                    		1
+#define CONFIG_MODULE_WATCHDOG                 		1
+#define CONFIG_MODULE_DEMETER_SENSOR                   	1
+#define CONFIG_MODULE_LORA			1
+#define CONFIG_MODULE_IO_BOARD			1
+#define CONFIG_MODULE_CONTIKI			1
+#define CONFIG_MODULE_RTC			1
+#define CONFIG_MODULE_DI                1
+#define CONFIG_MODULE_I2C            1
+
+#define CONFIG_RCC_HSI          0       // SYSCLK = HSI
+#define CONFIG_RCC_HSE          1       // SYSCLK = HSE
+#if (CONFIG_RCC_HSI) && (CONFIG_RCC_HSE)
+#error "ERROR! Please choose one SYSCLK source."
+#endif /* CONFIG_RCC_HSI && CONFIG_RCC_HSE */
+
+// LED config
+#if CONFIG_MODULE_LED
+#define CONFIG_LED_ACTIVE_LOW	1
+#define CONFIG_LED_1 		1
+#define CONFIG_LED_2		0
+#if CONFIG_LED_1
+#define CONFIG_LED_1_GPIO_PIN                   	GPIO_Pin_13
+#define CONFIG_LED_1_GPIO_PORT                  	GPIOC
+#define CONFIG_LED_1_GPIO_CLK                   	RCC_APB2Periph_GPIOC
+#define CONFIG_LED_1_GPIO_CLK_FUNC              	RCC_APB2PeriphClockCmd
+#endif /* CONFIG_LED_1*/
+#if CONFIG_LED_2
+#define CONFIG_LED_2_GPIO_PIN                   	GPIO_Pin_2
+#define CONFIG_LED_2_GPIO_PORT                  	GPIOD
+#define CONFIG_LED_2_GPIO_CLK                   	RCC_APB2Periph_GPIOD
+#define CONFIG_LED_2_GPIO_CLK_FUNC              	RCC_APB2PeriphClockCmd
+#endif /* CONFIG_LED_2 */
+#endif /* CONFIG_MODULE_LED */
+
+
+// Debug USART config
+#if CONFIG_MODULE_DEBUG_USART
+#define CONFIG_DEBUG_USART                      		USART1
+#define CONFIG_DEBUG_USART_CLK                  		RCC_APB2Periph_USART1
+#define CONFIG_DEBUG_USART_CLK_FUNC             	RCC_APB2PeriphClockCmd
+#define CONFIG_DEBUG_USART_BAUDRATE             		115200
+
+#define CONFIG_DEBUG_USART_TX_GPIO_PORT         	GPIOA
+#define CONFIG_DEBUG_USART_TX_GPIO_PIN          	GPIO_Pin_9
+#define CONFIG_DEBUG_USART_TX_GPIO_CLK          	RCC_APB2Periph_GPIOA
+#define CONFIG_DEBUG_USART_TX_GPIO_CLK_FUNC     	RCC_APB2PeriphClockCmd
+
+#define CONFIG_DEBUG_USART_RX_GPIO_PORT         	GPIOA
+#define CONFIG_DEBUG_USART_RX_GPIO_PIN          	GPIO_Pin_10
+#define CONFIG_DEBUG_USART_RX_GPIO_CLK          	RCC_APB2Periph_GPIOA
+#define CONFIG_DEBUG_USART_RX_GPIO_CLK_FUNC     	RCC_APB2PeriphClockCmd
+#endif /* CONFIG_MODULE_DEBUG_USART */
+
+
+#if CONFIG_MODULE_MODBUS
+#define CONFIG_MODBUS_SLAVE                     	0
+#if CONFIG_MODBUS_SLAVE
+#define CONFIG_MODBUS_ADDR                      		0x01
+#define CONFIG_MODBUS_CONF_ADDR                 		0x00
+#define CONFIG_MODBUS_ADDR_SET_FN_CODE          	0x10
+#define CONFIG_MODBUS_ADDR_GET_FN_CODE          	0x20
+#endif /* CONFIG_MODBUS_SLAVE */
+
+// Modbus UART config
+#define CONFIG_MODBUS_UART                      		USART2
+#define CONFIG_MODBUS_UART_CLK                  		RCC_APB1Periph_USART2
+#define CONFIG_MODBUS_UART_CLK_FUN              		RCC_APB1PeriphClockCmd
+#define CONFIG_MODBUS_UART_BAUDRATE             	9600
+
+#define CONFIG_MODBUS_UART_TX_GPIO_PORT         	GPIOA
+#define CONFIG_MODBUS_UART_TX_GPIO_PIN          	GPIO_Pin_2
+#define CONFIG_MODBUS_UART_TX_GPIO_CLK          	RCC_APB2Periph_GPIOA
+#define CONFIG_MODBUS_UART_TX_GPIO_CLK_FUN      	RCC_APB2PeriphClockCmd
+
+#define CONFIG_MODBUS_UART_RX_GPIO_PORT         	GPIOA
+#define CONFIG_MODBUS_UART_RX_GPIO_PIN          	GPIO_Pin_3
+#define CONFIG_MODBUS_UART_RX_GPIO_CLK          	RCC_APB2Periph_GPIOA
+#define CONFIG_MODBUS_UART_RX_GPIO_CLK_FUN      	RCC_APB2PeriphClockCmd
+
+#define CONFIG_MODBUS_UART_IRQHandler           	USART2_IRQHandler
+#define CONFIG_MODBUS_UART_IRQ                  		USART2_IRQn
+#define CONFIG_MODBUS_UART_NVIC_PRIO            	3
+
+// Modbus t3.5 timer config
+#define CONFIG_MODBUS_TIM                       		TIM2
+#define CONFIG_MODBUS_TIM_CLK                   		RCC_APB1Periph_TIM2
+#define CONFIG_MODBUS_TIM_CLK_FUN               		RCC_APB1PeriphClockCmd
+
+#define CONFIG_MODBUS_TIM_IRHANDLER             		TIM2_IRQHandler
+#define CONFIG_MODBUS_TIM_IRQ                   		TIM2_IRQn
+#define CONFIG_MODBUS_TIM_IRQ_PRIO              		4
+#endif /* CONFIG_MODULE_MODBUS */
+
+
+#if CONFIG_MODULE_LORA
+#define CONFIG_LORA_DEBUG			1
+#if CONFIG_LORA_DEBUG
+#define CONFIG_LORA_DEBUG_LEVEL 			3
+#define CONFIG_LORA_DEBUG_LEVEL_ERR		1
+#define CONFIG_LORA_DEBUG_LEVEL_WARN		2
+#define CONFIG_LORA_DEBUG_LEVEL_NOTICE		3
+#define CONFIG_LORA_DEBUG_LEVEL_INFO		4
+#define CONFIG_LORA_DEBUG_LEVEL_DEBUG		5
+#endif /* CONFIG_LORA_DEBUG */
+
+#define CONFIG_LORA_TIMER_INTERVAL		200 /* ms */
+
+#define CONFIG_LORA_SX126X		1
+
+#define CONFIG_LORA_TEST_MODE           0
+#if CONFIG_LORA_TEST_MODE
+#warning "LoRa works on test mode!."
+#define CONFIG_LORA_TEST_RX     0
+#define CONFIG_LORA_TEST_TX     0
+#if (CONFIG_LORA_TEST_RX == 1) && (CONFIG_LORA_TEST_TX == 1)
+#error "LoRa can only work on single test mode (tx or rx)!"
+#elif (CONFIG_LORA_TEST_RX == 0) && (CONFIG_LORA_TEST_TX == 0)
+#error "Please choose test tx or rx mode!"
+#endif
+#endif /* CONFIG_LORA_TEST_MODE */
+
+#endif /* CONFIG_MODULE_LORA */
+
+
+#if CONFIG_MODULE_LORA && CONFIG_LORA_SX126X
+//NSS	SCK	MISO	MOSI	NRST	TXEN	RXEN	BUSY	DIO1	DIO2
+//PA4	PA5	PA6	PA7	PB5	PB4	PB3	PA15	PB0	PB1 
+
+#define CONFIG_SX126X_SPI			SPI1
+#define CONFIG_SX126X_CLK_FUN		RCC_APB2PeriphClockCmd
+#define CONFIG_SX126X_CLK			RCC_APB2Periph_SPI1
+
+#define CONFIG_SX126X_CS_CLK_FUN		RCC_APB2PeriphClockCmd
+#define CONFIG_SX126X_CS_CLK		RCC_APB2Periph_GPIOA
+#define CONFIG_SX126X_CS_PORT		GPIOA
+#define CONFIG_SX126X_CS_PIN		GPIO_Pin_4
+
+#define CONFIG_SX126X_SCK_CLK_FUN	RCC_APB2PeriphClockCmd
+#define CONFIG_SX126X_SCK_CLK		RCC_APB2Periph_GPIOA
+#define CONFIG_SX126X_SCK_PORT		GPIOA
+#define CONFIG_SX126X_SCK_PIN		GPIO_Pin_5
+
+#define CONFIG_SX126X_MISO_CLK_FUN	RCC_APB2PeriphClockCmd
+#define CONFIG_SX126X_MISO_CLK		RCC_APB2Periph_GPIOA
+#define CONFIG_SX126X_MISO_PORT		GPIOA
+#define CONFIG_SX126X_MISO_PIN		GPIO_Pin_6
+
+#define CONFIG_SX126X_MOSI_CLK_FUN	RCC_APB2PeriphClockCmd
+#define CONFIG_SX126X_MOSI_CLK		RCC_APB2Periph_GPIOA
+#define CONFIG_SX126X_MOSI_PORT 		GPIOA
+#define CONFIG_SX126X_MOSI_PIN		GPIO_Pin_7
+
+#define CONFIG_SX126X_NRST_CLK_FUN	RCC_APB2PeriphClockCmd
+#define CONFIG_SX126X_NRST_CLK		RCC_APB2Periph_GPIOB
+#define CONFIG_SX126X_NRST_PORT 		GPIOB
+#define CONFIG_SX126X_NRST_PIN		GPIO_Pin_5
+
+#define CONFIG_SX126X_TXEN_CLK_FUN	RCC_APB2PeriphClockCmd
+#define CONFIG_SX126X_TXEN_CLK		RCC_APB2Periph_GPIOB
+#define CONFIG_SX126X_TXEN_PORT 		GPIOB
+#define CONFIG_SX126X_TXEN_PIN		GPIO_Pin_4
+
+#define CONFIG_SX126X_RXEN_CLK_FUN	RCC_APB2PeriphClockCmd
+#define CONFIG_SX126X_RXEN_CLK		RCC_APB2Periph_GPIOB
+#define CONFIG_SX126X_RXEN_PORT 		GPIOB
+#define CONFIG_SX126X_RXEN_PIN		GPIO_Pin_3
+
+#define CONFIG_SX126X_BUSY_CLK_FUN	RCC_APB2PeriphClockCmd
+#define CONFIG_SX126X_BUSY_CLK		RCC_APB2Periph_GPIOA
+#define CONFIG_SX126X_BUSY_PORT 		GPIOA
+#define CONFIG_SX126X_BUSY_PIN		GPIO_Pin_15
+
+#define CONFIG_SX126X_DIO1_CLK_FUN	RCC_APB2PeriphClockCmd
+#define CONFIG_SX126X_DIO1_CLK		RCC_APB2Periph_GPIOB
+#define CONFIG_SX126X_DIO1_PORT 		GPIOB
+#define CONFIG_SX126X_DIO1_PIN		GPIO_Pin_0
+#define CONFIG_SX126X_DIO1_EXTI_PORTSRC	GPIO_PortSourceGPIOB
+#define CONFIG_SX126X_DIO1_EXTI_PINSRC	GPIO_PinSource0
+#define CONFIG_SX126X_DIO1_EXTI_LINE	EXTI_Line0
+#define CONFIG_SX126X_DIO1_EXTI_IRQ	EXTI0_IRQn
+#define CONFIG_SX126X_DIO1_EXTI_ISR	EXTI0_IRQHandler
+
+#define CONFIG_SX126X_DIO2_CLK_FUN	RCC_APB2PeriphClockCmd
+#define CONFIG_SX126X_DIO2_CLK		RCC_APB2Periph_GPIOB
+#define CONFIG_SX126X_DIO2_PORT 		GPIOB
+#define CONFIG_SX126X_DIO2_PIN		GPIO_Pin_1
+#define CONFIG_SX126X_DIO2_EXTI_PORTSRC 	GPIO_PortSourceGPIOB
+#define CONFIG_SX126X_DIO2_EXTI_PINSRC	GPIO_PinSource1
+#define CONFIG_SX126X_DIO2_EXTI_LINE	EXTI_Line1
+#define CONFIG_SX126X_DIO2_EXTI_IRQ	EXTI1_IRQn
+#define CONFIG_SX126X_DIO2_EXTI_ISR	EXTI1_IRQHandler
+
+#define CONFIG_LORA_8B_ADDR             0
+
+#endif /* CONFIG_MODULE_LORA && CONFIG_LORA_SX126X */
+
+
+#if CONFIG_MODULE_FW_ENV
+#define CONFIG_FW_ENV_SIZE                     	0x400   // 1024
+#define CONFIG_FW_ENV_START_ADDR                	0x0800E000
+#define CONFIG_FW_ENV_END_ADDR                  	0x08010000
+#endif /* CONFIG_MODULE_FW_ENV */
+
+
+#if CONFIG_MODULE_WATCHDOG
+#define CONFIG_WATCHDOG_PRV                     	IWDG_Prescaler_128
+#define CONFIG_WATCHDOG_RLV                     	3125
+#endif /* CONFIG_MODULE_WATCHDOG */
+
+
+#if CONFIG_MODULE_DEMETER_SENSOR
+#define CONFIG_DEMETER_SENSOR_LIGHT             	0
+#define CONFIG_DEMETER_SENSOR_RAIN              	0
+#define CONFIG_DEMETER_SENSOR_AIR_TH            	0
+#define CONFIG_DEMETER_SENSOR_WL_DI	1
+
+#if CONFIG_DEMETER_SENSOR_WL_DI
+#define CONFIG_WL_DI_1_GPIO_PORT		GPIOB
+#define CONFIG_WL_DI_1_GPIO_PIN		GPIO_Pin_9
+#define CONFIG_WL_DI_1_GPIO_CLK		RCC_APB2Periph_GPIOB
+#define CONFIG_WL_DI_1_GPIO_CLK_FUN	RCC_APB2PeriphClockCmd
+
+#define CONFIG_WL_DI_2_GPIO_PORT		GPIOB
+#define CONFIG_WL_DI_2_GPIO_PIN		GPIO_Pin_8
+#define CONFIG_WL_DI_2_GPIO_CLK		RCC_APB2Periph_GPIOB
+#define CONFIG_WL_DI_2_GPIO_CLK_FUN	RCC_APB2PeriphClockCmd
+
+#define CONFIG_WL_DI_3_GPIO_PORT		GPIOB
+#define CONFIG_WL_DI_3_GPIO_PIN		GPIO_Pin_7
+#define CONFIG_WL_DI_3_GPIO_CLK		RCC_APB2Periph_GPIOB
+#define CONFIG_WL_DI_3_GPIO_CLK_FUN	RCC_APB2PeriphClockCmd
+#endif /* CONFIG_DEMETER_SENSOR_WL_DI */
+#endif /* CONFIG_MODULE_DEMETER_SENSOR */
+
+#if CONFIG_MODULE_IO_BOARD
+#define CONFIG_IO_BOARD_POWER_SET_GPIO_PIN	GPIO_Pin_8
+#define CONFIG_IO_BOARD_POWER_SET_GPIO_PORT	GPIOB
+#define CONFIG_IO_BOARD_POWER_SET_CLK		RCC_APB2Periph_GPIOB
+#define CONFIG_IO_BOARD_POWER_SET_CLK_FUN	RCC_APB2PeriphClockCmd
+
+#define CONFIG_IO_BOARD_POWER_RESET_GPIO_PIN	GPIO_Pin_9
+#define CONFIG_IO_BOARD_POWER_RESET_GPIO_PORT	GPIOB
+#define CONFIG_IO_BOARD_POWER_RESET_CLK		RCC_APB2Periph_GPIOB
+#define CONFIG_IO_BOARD_POWER_RESET_CLK_FUN	RCC_APB2PeriphClockCmd
+#endif /* CONFIG_MODULE_IO_BOARD */
+
+#if CONFIG_MODULE_DI
+#define CONFIG_DI1              1
+#if CONFIG_DI1
+#define CONFIG_DI1_GPIO_PIN              GPIO_Pin_1
+#define CONFIG_DI1_GPIO_PORT             GPIOA
+#define CONFIG_DI1_GPIO_CLK              RCC_APB2Periph_GPIOA
+#define CONFIG_DI1_GPIO_CLK_FUN          RCC_APB2PeriphClockCmd
+#endif /* CONFIG_DI1 */
+#endif /* CONFIG_MODULE_DI */
+
+#if CONFIG_MODULE_I2C
+#define CONFIG_I2C_SCL_GPIO_PORT               GPIOB
+#define CONFIG_I2C_SCL_GPIO_PIN                GPIO_Pin_6
+#define CONFIG_I2C_SCL_GPIO_CLK_FUNC           RCC_APB2PeriphClockCmd
+#define CONFIG_I2C_SCL_GPIO_CLK                RCC_APB2Periph_GPIOB
+
+#define CONFIG_I2C_SDA_GPIO_PORT               GPIOB
+#define CONFIG_I2C_SDA_GPIO_PIN                GPIO_Pin_7
+#define CONFIG_I2C_SDA_GPIO_CLK_FUNC           RCC_APB2PeriphClockCmd
+#define CONFIG_I2C_SDA_GPIO_CLK                RCC_APB2Periph_GPIOB
+
+#define CONFIG_I2C                             I2C1
+#define CONFIG_I2C_CLK_FUNC                    RCC_APB1PeriphClockCmd
+#define CONFIG_I2C_CLK                         RCC_APB1Periph_I2C1
+
+#if (CONFIG_RCC_HSI) || (CONFIG_RCC_HSE)
+#define CONFIG_I2C_SPEED                100000
+#else
+#define CONFIG_I2C_SPEED                400000
+#endif /* CONFIG_RCC_HSI ||CONFIG_RCC_HSE */
+
+#endif /* CONFIG_MODULE_I2C */
+
+#endif /* __CONFIG_H__ */
+
